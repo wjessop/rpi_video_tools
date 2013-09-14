@@ -23,8 +23,8 @@ import (
 	"io"
 	"log"
 	"net"
-	"os"
 	"os/exec"
+	"syscall"
 )
 
 func main() {
@@ -51,12 +51,12 @@ func main() {
 
 		written, err := io.Copy(conn, stdout)
 		if err != nil {
-			log.Println("User disconnected")
+			log.Println("User disconnected, ", err)
 		}
 
 		log.Printf("Wrote %v bytes", written)
 
-		if err := cmd.Process.Signal(os.Interrupt); err != nil {
+		if err := cmd.Process.Signal(syscall.SIGTERM); err != nil {
 			log.Fatal(err)
 		}
 
