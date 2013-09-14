@@ -39,7 +39,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		cmd := exec.Command("/opt/vc/bin/raspivid", "-n", "--hflip", "--vflip", "-w", "1280", "-h", "720", "-b", "1000000", "-t", "0", "-o", "-")
+		cmd := exec.Command("/opt/vc/bin/raspivid", "-n", "--hflip", "--vflip", "-w", "1280", "-h", "720", "-b", "5000000", "-fps", "25", "-t", "0", "-o", "-")
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
 			log.Fatal(err)
