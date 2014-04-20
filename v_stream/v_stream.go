@@ -17,7 +17,7 @@
 
 */
 
-package main
+package v_stream
 
 import (
 	"io"
@@ -27,22 +27,38 @@ import (
 	"syscall"
 )
 
-func main() {
-	ln, err := net.Listen("tcp", ":10001")
+var read_chunk int64 = 500
+
+func ServeVideo() {
+	log.Println("Starting video stream server")
+
+	tcp_addr, err := net.ResolveTCPAddr("tcp4", ":10001")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Couldn't resolve tcp address, ", err)
 	}
 
+	ln, err := net.ListenTCP("tcp4", tcp_addr)
+
+	// ln, err := net.Listen("tcp", ":10001")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
 	for {
-		conn, err := ln.Accept()
+		conn, err := ln.AcceptTCP()
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Error accepting connection, ", err)
 		}
 
-		cmd := exec.Command("/opt/vc/bin/raspivid", "-g", "250", "-ex", "auto", "-awb", "auto", "-n", "--hflip", "--vflip", "-w", "640", "-h", "480", "-b", "500000", "-fps", "25", "-t", "0", "-o", "-")
+		conn.SetNoDelay(true)
+		conn.SetWriteBuffer(10e7)
+
+		// /opt/vc/bin/raspivid -g 10 -n --hflip -w 1280 -h 720 -b 400000 -fps 30 -t 0
+
+		cmd := exec.Command("/opt/vc/bin/raspivid", "-g", "10", "-n", "-w", "800", "-h", "600", "-b", "500000", "-fps", "30", "-t", "0", "-o", "-")
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("raspivid failed to start: ", err)
 		}
 
 		if err := cmd.Start(); err != nil {

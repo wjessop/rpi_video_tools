@@ -18,11 +18,11 @@ Very simple program for automatically spinning up a h.264 stream
 when requested on port 10001. Kills the stream when the client
 disconnects, saving CPU time / power.
 
-Alter the values in the Command to suit. The location of the
+Alter the values in the raspivid command to suit. The location of the
 command is probably Arch specific, might need changing on
-another distro. To compile on Mac or Linux:
+another distro.
 
-Run the program on the Pi, then to get a stream on your local machine run:
+Run the program on the Pi (see examples/), then to get a stream on your local machine run:
 
 	nc <IP address of pi> 10001 | mplayer -fs -fps 200 -demuxer h264es -fs -
 
