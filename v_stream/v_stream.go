@@ -70,6 +70,8 @@ func ServeVideo(x_res, y_res, bitrate int) {
 		}
 
 		log.Printf("Wrote %v bytes", written)
+		conn.Close()
+		log.Printf("Closed remote connection")
 
 		if err := cmd.Process.Signal(syscall.SIGTERM); err != nil {
 			log.Fatal(err)
