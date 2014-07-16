@@ -24,12 +24,13 @@ import (
 	"log"
 	"net"
 	"os/exec"
+	"strconv"
 	"syscall"
 )
 
 var read_chunk int64 = 500
 
-func ServeVideo() {
+func ServeVideo(x_res, y_res, bitrate int) {
 	log.Println("Starting video stream server")
 
 	tcp_addr, err := net.ResolveTCPAddr("tcp4", ":10001")
@@ -53,9 +54,7 @@ func ServeVideo() {
 		conn.SetNoDelay(true)
 		conn.SetWriteBuffer(10e7)
 
-		// /opt/vc/bin/raspivid -g 10 -n --hflip -w 1280 -h 720 -b 400000 -fps 30 -t 0
-
-		cmd := exec.Command("/opt/vc/bin/raspivid", "-g", "10", "-n", "-w", "800", "-h", "600", "-b", "500000", "-fps", "30", "-t", "0", "-o", "-")
+		cmd := exec.Command("/opt/vc/bin/raspivid", "-g", "10", "-n", "-w", strconv.Itoa(x_res), "-h", strconv.Itoa(y_res), "-b", strconv.Itoa(bitrate), "-fps", "30", "-t", "0", "-o", "-")
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
 			log.Fatal("raspivid failed to start: ", err)
